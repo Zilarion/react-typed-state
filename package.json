@@ -9,6 +9,7 @@
     "build:js": "rollup -c",
     "build": "npm run build:types && npm run build:js"
   },
+  "types": "./dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Zilarion/use-state.git"

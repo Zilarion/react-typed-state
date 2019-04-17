@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { StoresContext } from '../../useStore'
+import { StoresContext } from '../../index'
 import TodoList from './TodoList'
 
 function App () {

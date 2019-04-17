@@ -1,14 +1,16 @@
 {
   "compilerOptions": {
     "outDir": "dist",
-    "module": "commonjs",
     "target": "es5",
-    "lib": ["es6", "dom"],
-    "sourceMap": true,
-    "jsx": "react",
+    "module": "esnext",
     "moduleResolution": "node",
-    "rootDir": "src",
-    "strict": true
+    "downlevelIteration": true,
+    "esModuleInterop": true,
+    "sourceMap": false,
+    "strict": true,
+    "lib": ["es6", "dom"],
+    "jsx": "react"
   },
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }

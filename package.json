@@ -1,36 +1,32 @@
 {
-  "name": "use-state",
+  "name": "use-store",
   "version": "0.1.0",
   "description": "A library for easy and simple state management using react hooks.",
   "scripts": {
     "type-check": "tsc --noEmit",
     "type-check:watch": "npm run type-check --watch",
-    "build:types": "tsc --declaration --emitDeclarationOnly",
     "build": "node build-rollup.js"
   },
+  "main": "dist/index.js",
+  "jsnext:main": "dist/index.module.js",
+  "module": "dist/index.module.js",
+  "react-native": "dist/native.js",
+  "typings": "dist/index.d.ts",
   "types": "./dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Zilarion/use-state.git"
+    "url": "git+https://github.com/Zilarion/use-store.git"
   },
-  "main": "dist/use-state.cjs.js",
-  "module": "dist/use-stateesm.js",
-  "browser": "dist/use-state.iife.js",
   "author": {
     "name": "Ruud Andriessen",
     "email": "ruud.andriessen@gmail.com"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Zilarion/use-state/issues"
+    "url": "https://github.com/Zilarion/use-store/issues"
   },
-  "homepage": "https://github.com/Zilarion/use-state#readme",
+  "homepage": "https://github.com/Zilarion/use-store#readme",
   "devDependencies": {
-    "@babel/core": "^7.4.3",
-    "@babel/plugin-proposal-class-properties": "^7.4.0",
-    "@babel/plugin-proposal-object-rest-spread": "^7.4.3",
-    "@babel/preset-env": "^7.4.3",
-    "@babel/preset-typescript": "^7.3.3",
     "@types/react": "^16.8.13",
     "eslint": "^5.16.0",
     "eslint-config-standard": "^12.0.0",
@@ -39,9 +35,12 @@
     "eslint-plugin-promise": "^4.1.1",
     "eslint-plugin-standard": "^4.0.0",
     "rollup": "^1.10.0",
-    "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^9.3.4",
+    "rollup-plugin-filesize": "^6.0.1",
     "rollup-plugin-node-resolve": "^4.2.3",
+    "rollup-plugin-replace": "^2.2.0",
+    "rollup-plugin-terser": "^4.0.4",
+    "rollup-plugin-typescript2": "^0.20.1",
     "typescript": "^3.4.3"
   },
   "dependencies": {

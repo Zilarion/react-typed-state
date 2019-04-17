@@ -1,6 +1,6 @@
 var path = require('path')
 var filesize = require('rollup-plugin-filesize')
-var typescript = require('rollup-plugin-typescript')
+var typescript = require('rollup-plugin-typescript2')
 var commonjs = require('rollup-plugin-commonjs')
 var resolve = require('rollup-plugin-node-resolve')
 var terser = require('rollup-plugin-terser').terser
@@ -14,11 +14,13 @@ function build (target, mode, filename) {
       'process.env.NODE_ENV': JSON.stringify('production')
     }),
     typescript({
-      tsconfig: 'tsconfig.json'
+      tsconfig: 'tsconfig.build.json',
+      clean: true,
+      check: true,
+      useTsconfigDeclarationDir: true
     }),
     resolve({
-      module: true,
-      main: true
+      mainFields: ['module', 'main']
     }),
     commonjs()
   ]

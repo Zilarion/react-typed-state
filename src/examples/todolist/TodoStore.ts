@@ -1,5 +1,5 @@
 import { useStore } from '../..'
-import { Reducers } from '../../actions'
+import { IReducers } from '../../useStore'
 
 interface Todo {
   name: string
@@ -7,7 +7,7 @@ interface Todo {
 }
 type Todos = Todo[]
 
-export function useTodoList (): [Todos, Reducers<Todos>] {
+export function useTodoList (): [Todos, IReducers<Todos>] {
   const [data, actions] = useStore<Todos>('todos', [], {
     toggleComplete: (data: Todos, name: string) => {
       return data.map(data =>

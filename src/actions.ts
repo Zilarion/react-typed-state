@@ -1,8 +1,7 @@
-export type Action = { key: string } | Object
-export type Reducers<Data> = {
-  [key: string]: (data: Data, ...others: any[]) => Data
-}
+import { Reducer } from 'react'
+import { IReducers } from './useStore'
 
+export type Action = { key: string } | Object
 const actions: Action[] = []
 
 function addAction (action: Action) {
@@ -11,15 +10,17 @@ function addAction (action: Action) {
   console.log(action)
 }
 
-function attachMiddlewareToReducers<Data> (reducers: Reducers<Data>) {
+function attachMiddlewareToReducers<State> (reducers: IReducers<State>) {
+  let middleWareReducers: IReducers<State> = {}
   for (const key in actions) {
     if (reducers.hasOwnProperty(key)) {
-      reducers[key] = (data, ...args) => {
+      middleWareReducers[key] = (data, ...args) => {
         addAction({ key, ...args }) // log the action
         return reducers[key](data, args)
       }
     }
   }
+  return middleWareReducers
 }
 
 export { addAction, attachMiddlewareToReducers }

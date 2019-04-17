@@ -1,5 +1,5 @@
 import { useContext, createContext } from 'react'
-import { IReducers } from '../useStore'
+import { IReducers } from './useStore'
 
 // A store is simple some state with a couple of reducers
 interface Store<State> {

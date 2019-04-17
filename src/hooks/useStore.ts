@@ -1,6 +1,6 @@
 import { Reducer } from 'react'
-import { useContextStore } from './hooks/useContextStore'
-import { attachMiddlewareToReducers } from './actions'
+import { useContextStore } from './useContextStore'
+import { attachMiddlewareToReducers } from '../actions'
 
 export interface IReducers<State> {
   [name: string]: Reducer<State, any>

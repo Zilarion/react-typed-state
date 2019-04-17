@@ -1,5 +1,5 @@
 import { Reducer } from 'react'
-import { IReducers } from './useStore'
+import { IReducers } from './hooks/useStore'
 
 export type Action = { key: string } | Object
 const actions: Action[] = []

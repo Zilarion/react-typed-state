@@ -1,3 +1,4 @@
-import { useStore } from "./useStore";
+import { StoresContext } from './hooks/useContextStore'
+import { useStore } from './hooks/useStore'
 
-export { useStore };
+export { useStore, StoresContext }

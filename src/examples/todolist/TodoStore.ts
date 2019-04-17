@@ -1,5 +1,5 @@
 import { useStore } from '../..'
-import { IReducers } from '../../useStore'
+import { IReducers } from '../../hooks/useStore'
 
 interface Todo {
   name: string

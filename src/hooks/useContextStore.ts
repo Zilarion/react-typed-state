@@ -1,4 +1,4 @@
-import * as React from 'react'
+import { createContext, useContext } from 'react'
 import { IReducers } from './useStore'
 
 // A store is simple some state with a couple of reducers
@@ -12,13 +12,13 @@ interface Stores {
   [id: string]: Store<any>
 }
 
-export const StoresContext = React.createContext<Stores>({})
+export const StoresContext = createContext<Stores>({})
 export function useContextStore<State> (
   id: string,
   initialValue: State,
   reducers: IReducers<State>
 ) {
-  const stores = React.useContext(StoresContext)
+  const stores = useContext(StoresContext)
   if (id in stores) {
     return stores[id]
   }

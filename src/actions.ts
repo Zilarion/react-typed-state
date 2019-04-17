@@ -1,4 +1,3 @@
-import { Reducer } from 'react'
 import { IReducers } from './hooks/useStore'
 
 export type Action = { key: string } | Object

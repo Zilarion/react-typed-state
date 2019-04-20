@@ -1,25 +1,40 @@
 import { IReducers } from './hooks/useStore'
 
-export type Action = { key: string } | Object
-const actions: Action[] = []
+export type IAction = { type: string }
 
-function addAction (action: Action) {
-  actions.push(action)
+const history: IAction[] = []
+function logAction(action: IAction) {
+  history.push(action)
   // dev tools?
   console.log(action)
 }
 
-function attachMiddlewareToReducers<State> (reducers: IReducers<State>) {
-  let middleWareReducers: IReducers<State> = {}
-  for (const key in actions) {
-    if (reducers.hasOwnProperty(key)) {
-      middleWareReducers[key] = (data, ...args) => {
-        addAction({ key, ...args }) // log the action
-        return reducers[key](data, args)
-      }
+export function attachMiddlewareToReducers<
+  State,
+  Action extends IAction,
+  Reducers extends IReducers<State, Action>
+>(
+  reducers: Reducers,
+  mw: (prevState: State, action: Action) => void
+): Reducers {
+  let result: Reducers = <Reducers>{}
+
+  Object.keys(reducers).forEach(key => {
+    result[key] = (prevState, action) => {
+      mw(prevState, action)
+      return reducers[key](prevState, action)
     }
-  }
-  return middleWareReducers
+  })
+  return result
 }
 
-export { addAction, attachMiddlewareToReducers }
+export function attachLoggingToActions<
+  State,
+  Action extends IAction,
+  Reducers extends IReducers<State, any>
+>(reducers: Reducers) {
+  return attachMiddlewareToReducers<State, Action, Reducers>(
+    reducers,
+    (prevState, action) => logAction(action)
+  )
+}

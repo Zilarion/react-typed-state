@@ -6,11 +6,18 @@
     "moduleResolution": "node",
     "downlevelIteration": true,
     "esModuleInterop": true,
+    "alwaysStrict": true,
     "sourceMap": false,
+    "removeComments": false,
     "strict": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
     "lib": ["es6", "dom"],
     "jsx": "react"
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "test/**/*"],
   "exclude": ["node_modules"]
 }

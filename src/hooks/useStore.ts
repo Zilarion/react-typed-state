@@ -1,26 +1,48 @@
-import { Reducer } from 'react'
+import { Reducer, useReducer, Dispatch } from 'react'
 import { useContextStore } from './useContextStore'
-import { IAction, attachLoggingToActions } from '../actions'
+import { IAction } from '../actions'
 
-export interface IReducers<State, Action extends IAction> {
-  [name: string]: Reducer<State, Action>
+export interface IReducers<State, Actions extends IAction> {
+  [name: string]: Reducer<State, Actions>
+}
+
+// TODO: Typing of this function is a bit iffy. There should probably be a better way other than any casts here.
+function reducersToDispatchers<
+  State,
+  Action extends IAction,
+  Reducers extends IReducers<State, Action>
+>(reducers: Reducers): { [P in keyof Reducers]: Dispatch<Action> } {
+  let result: any = {}
+  Object.keys(reducers).map(key => {
+    const reducer = reducers[key]
+    const [, dispatch] = useReducer(reducer, <any>{})
+    result[key] = dispatch
+  })
+  return <{ [P in keyof Reducers]: Dispatch<Action> }>result
 }
 
 // Use store hook
 export function useStore<
-State,
-Actions extends IAction,
-Reducers extends IReducers<State, Actions>
-> (id: string, initialValue: State, reducers: Reducers): [State, Reducers] {
-  const store = useContextStore<State, Actions, Reducers>(
+  State,
+  Action extends IAction,
+  Reducers extends IReducers<State, Action>
+>(
+  id: string,
+  initialState: State,
+  reducers: Reducers
+): [State, Record<keyof Reducers, Dispatch<Action>>] {
+  const store = useContextStore<State, Action, Reducers>(
     id,
-    initialValue,
+    initialState,
     reducers
   )
+  // store.reducers = attachLoggingToActions<State, Action, Reducers>(reducers)
 
-  store.reducers = attachLoggingToActions<State, Actions, Reducers>(reducers)
+  // Because we do not allow the reducers to change, we can safely assume these reducers are always called in the correct order.
+  const dispatchers: Record<
+    keyof Reducers,
+    Dispatch<Action>
+  > = reducersToDispatchers<State, Action, Reducers>(reducers)
 
-  // Right now this exports the actual data reference, can we somehow prevent that?
-  // We could do a copy, but that may be expensive, perhaps just tell people not to :/
-  return [store.state, store.reducers]
+  return [store.state, dispatchers]
 }

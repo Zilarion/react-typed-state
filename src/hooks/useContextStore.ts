@@ -16,14 +16,13 @@ interface Stores {
 export const StoresContext = createContext<Stores>({})
 export function useContextStore<
 State,
-Actions extends IAction,
-Reducers extends IReducers<State, Actions>
+Action extends IAction,
+Reducers extends IReducers<State, Action>
 > (id: string, initialValue: State, reducers: Reducers): Store<State, Reducers> {
   const stores = useContext(StoresContext)
   if (id in stores) {
     return stores[id]
   }
-  const newStore = { state: initialValue, reducers }
-  stores[id] = newStore
+  stores[id] = { state: initialValue, reducers }
   return stores[id]
 }

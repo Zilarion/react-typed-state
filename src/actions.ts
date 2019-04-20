@@ -1,6 +1,8 @@
 import { IReducers } from './hooks/useStore'
 
-export type IAction = { type: string }
+export type IAction = {
+  type: string
+} & Object
 
 const history: IAction[] = []
 function logAction(action: IAction) {

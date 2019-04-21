@@ -16,9 +16,9 @@ export type IReducers<S, A> = { [K in keyof A]: Reducer<S, IModelAction<A>> }
 function useActionReducer<S, A, R extends IReducers<S, IModelActions<A>>>(
   reducers: R,
   initialState: S
-): [S, { [K in keyof R]: Dispatch<IModelActionWithType<A, R>> }] {
+): [S, { [K in keyof R]: Dispatch<IModelActionWithType<A, K>> }] {
   // We construct a map of key to dispatcher based on the reducers
-  type IDispatcherMap = { [K in keyof R]: Dispatch<IModelActionWithType<A, R>> }
+  type IDispatcherMap = { [K in keyof R]: Dispatch<IModelActionWithType<A, K>> }
 
   // First we create our store reducer
   const [state, dispatcher] = useReducer(
@@ -29,9 +29,11 @@ function useActionReducer<S, A, R extends IReducers<S, IModelActions<A>>>(
     initialState
   )
 
+  // And then build a map between the action we are dispatching and our store reducer
+  // By appending the function name as type of our action we are dispatching.
   let dispatchers: IDispatcherMap = <IDispatcherMap>{}
   for (const key in reducers) {
-    const actionDispatcher: Dispatch<IModelActionWithType<A, R>> = (
+    const actionDispatcher: Dispatch<IModelActionWithType<A, typeof key>> = (
       action: IModelAction<A>
     ) => dispatcher({ ...action, type: key })
     dispatchers[key] = actionDispatcher
@@ -54,7 +56,7 @@ export function useStore<S, A, R extends IReducers<S, IModelActions<A>>>(
   id: string,
   initialState: S,
   actions: R
-): [S, Record<keyof R, Dispatch<IModelActionWithType<A, R>>>] {
+): [S, { [K in keyof R]: Dispatch<IModelActionWithType<A, K>> }] {
   // const store = useContextStore<S, A, R>(id, initialState, actions)
   // store.reducers = attachLoggingToActions<State, Action, Reducers>(reducers)
   const [state, dispatchers] = useActionReducer(actions, initialState)

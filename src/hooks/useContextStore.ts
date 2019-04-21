@@ -1,6 +1,6 @@
+import { IModelActions } from './../actions'
 import { createContext, useContext } from 'react'
 import { IReducers } from './useStore'
-import { IAction } from '../actions'
 
 // A store is simple some state with a couple of reducers
 interface Store<State, Reducers> {
@@ -14,11 +14,11 @@ interface Stores {
 }
 
 export const StoresContext = createContext<Stores>({})
-export function useContextStore<
-State,
-Action extends IAction,
-Reducers extends IReducers<State, Action>
-> (id: string, initialValue: State, reducers: Reducers): Store<State, Reducers> {
+export function useContextStore<S, A, R extends IReducers<S, IModelActions<A>>> (
+  id: string,
+  initialValue: S,
+  reducers: R
+): Store<S, R> {
   const stores = useContext(StoresContext)
   if (id in stores) {
     return stores[id]

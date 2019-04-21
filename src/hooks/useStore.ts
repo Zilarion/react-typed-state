@@ -1,48 +1,62 @@
 import { Reducer, useReducer, Dispatch } from 'react'
-import { useContextStore } from './useContextStore'
-import { IAction } from '../actions'
+// import { useContextStore } from './useContextStore'
+import { IModelAction, IModelActions, IModelActionWithType } from '../actions'
 
-export interface IReducers<State, Actions extends IAction> {
-  [name: string]: Reducer<State, Actions>
-}
+// Reducers are defined as follows, given a state A and an action map A
+export type IReducers<S, A> = { [K in keyof A]: Reducer<S, IModelAction<A>> }
 
-// TODO: Typing of this function is a bit iffy. There should probably be a better way other than any casts here.
-function reducersToDispatchers<
-  State,
-  Action extends IAction,
-  Reducers extends IReducers<State, Action>
->(reducers: Reducers): { [P in keyof Reducers]: Dispatch<Action> } {
-  let result: any = {}
-  Object.keys(reducers).map(key => {
-    const reducer = reducers[key]
-    const [, dispatch] = useReducer(reducer, <any>{})
-    result[key] = dispatch
-  })
-  return <{ [P in keyof Reducers]: Dispatch<Action> }>result
-}
+// TODO: Typing of this function is a bit iffy.
+// There should probably be a better way other than any casts here.
 
-// Use store hook
-export function useStore<
-  State,
-  Action extends IAction,
-  Reducers extends IReducers<State, Action>
->(
-  id: string,
-  initialState: State,
-  reducers: Reducers
-): [State, Record<keyof Reducers, Dispatch<Action>>] {
-  const store = useContextStore<State, Action, Reducers>(
-    id,
-    initialState,
-    reducers
+/**
+ * Use a reducer that provides typed action dispatchers.
+ * @param reducers The reducers in the form of a key => reducer map.
+ * @param initialState The initial state of the state
+ */
+function useActionReducer<S, A, R extends IReducers<S, IModelActions<A>>>(
+  reducers: R,
+  initialState: S
+): [S, { [K in keyof R]: Dispatch<IModelActionWithType<A, R>> }] {
+  // We construct a map of key to dispatcher based on the reducers
+  type IDispatcherMap = { [K in keyof R]: Dispatch<IModelActionWithType<A, R>> }
+
+  // First we create our store reducer
+  const [state, dispatcher] = useReducer(
+    (prevState: S, action: IModelActionWithType<A, R>): S => {
+      const key = action.type
+      return reducers[key](prevState, action)
+    },
+    initialState
   )
+
+  let dispatchers: IDispatcherMap = <IDispatcherMap>{}
+  for (const key in reducers) {
+    const actionDispatcher: Dispatch<IModelActionWithType<A, R>> = (
+      action: IModelAction<A>
+    ) => dispatcher({ ...action, type: key })
+    dispatchers[key] = actionDispatcher
+  }
+
+  return [state, dispatchers]
+}
+
+/**
+ * Use store hook.
+ * S: the store state
+ * A: Action map ([action: string]: Object)
+ * R: Actions, defined as a reducer (S, Pick<A, keyof A>) => S
+ *
+ * @param id Store id
+ * @param initialState initial state
+ * @param actions actions that can be applied onto the state
+ */
+export function useStore<S, A, R extends IReducers<S, IModelActions<A>>>(
+  id: string,
+  initialState: S,
+  actions: R
+): [S, Record<keyof R, Dispatch<IModelActionWithType<A, R>>>] {
+  // const store = useContextStore<S, A, R>(id, initialState, actions)
   // store.reducers = attachLoggingToActions<State, Action, Reducers>(reducers)
-
-  // Because we do not allow the reducers to change, we can safely assume these reducers are always called in the correct order.
-  const dispatchers: Record<
-    keyof Reducers,
-    Dispatch<Action>
-  > = reducersToDispatchers<State, Action, Reducers>(reducers)
-
-  return [store.state, dispatchers]
+  const [state, dispatchers] = useActionReducer(actions, initialState)
+  return [state, dispatchers]
 }

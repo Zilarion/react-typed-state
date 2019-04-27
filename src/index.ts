@@ -1,4 +1,3 @@
-import { StoresContext } from './hooks/useContextStore'
-import { useStore } from './hooks/useStore'
+import { useActions } from './hooks/useActions'
 
-export { useStore, StoresContext }
+export { useActions }
